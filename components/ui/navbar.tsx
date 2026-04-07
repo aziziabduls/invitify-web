@@ -126,7 +126,7 @@ export function Navbar() {
                                             Resources
                                         </NavigationMenuTrigger>
                                         <NavigationMenuContent>
-                                            <ul className="w-[240px] bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800">
+                                            <ul className="w-60 bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800">
                                                 {resources.map((item) => (
                                                     <li key={item.title}>
                                                         <Link
@@ -206,7 +206,7 @@ export function Navbar() {
                         className="lg:hidden flex h-10 w-10 items-center justify-center rounded-full text-zinc-900 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800 transition-colors z-50 relative"
                         onClick={() => setIsOpen(!isOpen)}
                     >
-                        {isOpen ? <X className="h-[20px] w-[20px]" /> : <Menu className="h-[20px] w-[20px]" />}
+                        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                     </button>
 
                     {/* Change Language (Desktop) */}

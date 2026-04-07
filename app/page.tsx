@@ -28,10 +28,22 @@ export default async function Home() {
           {/* <Hero /> */}
           <NewHero />
           {/* event list */}
-          <div className="container mx-auto px-4 mt-28 mb-24">
+          <div className="container mx-auto px-4 mt-28 mb-0">
             <h2 className="text-6xl font-bold text-center text-primary mb-12 leading-tight tracking-tighter">
               Upcoming Events
             </h2>
+            {/* sort event free and paid */}
+            <div className="flex justify-center mb-12 ">
+              <button className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground px-4 py-2 rounded-md">
+                All Events
+              </button>
+              <button className="ml-2 bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground active:bg-secondary/90 active:text-secondary-foreground px-4 py-2 rounded-md">
+                Free Events
+              </button>
+              <button className="ml-2 bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground active:bg-secondary/90 active:text-secondary-foreground px-4 py-2 rounded-md">
+                Paid Events
+              </button>
+            </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               {events.map((event) => (
                 <Link key={event.id} href={`/events/${event.id}`}>
@@ -39,6 +51,7 @@ export default async function Home() {
                     image={event.image}
                     name={event.name}
                     tagline={event.tagline}
+                    is_free={event.is_free}
                   />
                 </Link>
               ))}

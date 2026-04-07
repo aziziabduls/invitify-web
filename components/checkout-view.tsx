@@ -234,7 +234,7 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
               <h2 className="mb-4 text-xl font-semibold">Order Summary</h2>
               
               <div className="mb-6 flex gap-4">
-                <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md">
                   <Image
                     src={event.image}
                     alt={event.name}

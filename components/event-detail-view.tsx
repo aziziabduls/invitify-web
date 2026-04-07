@@ -38,7 +38,7 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
       <main className="container mx-auto px-4 py-28">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Left Column: Image */}
-          <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-lg lg:aspect-square">
+          <div className="relative aspect-3/4 w-full overflow-hidden rounded-2xl shadow-lg lg:aspect-square">
             <Image
               src={event.image}
               alt={event.name}
@@ -108,7 +108,7 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center gap-2 whitespace-nowrap text-sm font-medium transition-colors ${
                       activeTab === tab.id
-                        ? "text-primary border-b-2 border-primary pb-1 -mb-[17px]"
+                        ? "text-primary border-b-2 border-primary pb-1 -mb-4.25"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -120,7 +120,7 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
             </div>
           </div>
 
-          <div className="mt-8 min-h-[300px]">
+          <div className="mt-8 min-h-75">
             {activeTab === "tickets" && (
               <div className="space-y-4">
                 <h3 className="text-2xl font-bold">Get your tickets</h3>
@@ -141,7 +141,7 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
                           : "bg-muted text-muted-foreground cursor-not-allowed"
                       }`}
                     >
-                      {event.status === "active" ? "Get Now" : "Unavailable"}
+                      {event.status === "active" ? event.is_free ? "Get Ticket For Free" : "Get Ticket Now" : "Unavailable"}
                     </Link>
                   </div>
                 </div>
