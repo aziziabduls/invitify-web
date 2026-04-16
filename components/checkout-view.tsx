@@ -55,7 +55,7 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
   const originalPrice = event.price || 0;
   // If free event, service fee is 0. Otherwise use 5000 or any logic you prefer.
   const serviceFee = originalPrice > 0 ? 5000 : 0;
-  
+
   const finalPrice = Math.max(0, originalPrice + serviceFee - appliedDiscount);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,14 +97,14 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
       alert("Please select a payment method");
       return;
     }
-    
+
     // Show recap popup
     setShowRecap(true);
   };
 
   const handleConfirmPayment = async () => {
     setIsProcessing(true);
-    
+
     // Construct transaction data
     const transactionData = {
       eventId: event.id,
@@ -129,13 +129,20 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
 
     try {
       // Send data to backend
-      await apiClient.post('/client/participants', transactionData);
+      const response = await apiClient.post('/client/participants', transactionData);
+      const participantId = response.data?.id || response.data?.participant?.id;
 
       setIsProcessing(false);
       setShowRecap(false);
-      
-      // Redirect to waiting page
-      router.push("/checkout/waiting");
+
+      // Redirect to waiting page with info for QR code
+      const params = new URLSearchParams({
+        eventId: event.id.toString(),
+        name: formData.name,
+        email: formData.email,
+        ...(participantId && { participantId: participantId.toString() })
+      });
+      router.push(`/checkout/waiting?${params.toString()}`);
     } catch (error) {
       console.error("Payment failed:", error);
       setIsProcessing(false);
@@ -180,16 +187,16 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
           <div className="flex flex-col items-center justify-center rounded-md bg-muted p-4">
             <p className="mb-4 text-sm font-medium">Scan QR Code to Pay</p>
             <div className="relative h-48 w-48 bg-white p-2">
-               {/* Placeholder for QR Code */}
-               <div className="h-full w-full bg-black">
-                 <div className="h-full w-full border-4 border-white bg-black p-2">
-                    <div className="grid h-full w-full grid-cols-4 grid-rows-4 gap-1">
-                        {[...Array(16)].map((_, i) => (
-                            <div key={i} className={`bg-white ${Math.random() > 0.5 ? 'opacity-100' : 'opacity-0'}`}></div>
-                        ))}
-                    </div>
-                 </div>
-               </div>
+              {/* Placeholder for QR Code */}
+              <div className="h-full w-full bg-black">
+                <div className="h-full w-full border-4 border-white bg-black p-2">
+                  <div className="grid h-full w-full grid-cols-4 grid-rows-4 gap-1">
+                    {[...Array(16)].map((_, i) => (
+                      <div key={i} className={`bg-white ${Math.random() > 0.5 ? 'opacity-100' : 'opacity-0'}`}></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
             <p className="mt-4 text-xs text-muted-foreground">
               Valid for all QRIS supported apps.
@@ -219,8 +226,8 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
     <div className="min-h-screen bg-background font-sans">
       <Navbar />
       <main className="container mx-auto px-4 py-18">
-        <Link 
-          href={`/events/${event.id}`} 
+        <Link
+          href={`/events/${event.id}`}
           className="mb-6 inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -232,7 +239,7 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
           <div className="lg:col-span-4 lg:order-2">
             <div className="sticky top-24 rounded-lg border bg-card p-6 shadow-sm">
               <h2 className="mb-4 text-xl font-semibold">Order Summary</h2>
-              
+
               <div className="mb-6 flex gap-4">
                 <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md">
                   <Image
@@ -259,8 +266,8 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                 <div className="flex justify-between py-1 text-sm">
                   <span>General Admission x 1</span>
                   <span className="font-medium">
-                    {originalPrice > 0 
-                      ? `Rp ${originalPrice.toLocaleString('id-ID')}` 
+                    {originalPrice > 0
+                      ? `Rp ${originalPrice.toLocaleString('id-ID')}`
                       : "Free"}
                   </span>
                 </div>
@@ -280,24 +287,24 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
 
               {/* Discount Code Input */}
               <div className="mb-4">
-                 <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Discount Code"
-                      className="flex-1 rounded-md border bg-transparent px-3 py-2 text-sm focus:border-primary focus:outline-none"
-                      value={discountCode}
-                      onChange={(e) => setDiscountCode(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      onClick={handleApplyDiscount}
-                      className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-black/80"
-                    >
-                      Apply
-                    </button>
-                 </div>
-                 {discountError && <p className="mt-1 text-xs text-red-500">{discountError}</p>}
-                 {appliedDiscount > 0 && <p className="mt-1 text-xs text-green-500">Code applied successfully!</p>}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Discount Code"
+                    className="flex-1 rounded-md border bg-transparent px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                    value={discountCode}
+                    onChange={(e) => setDiscountCode(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyDiscount}
+                    className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-black/80"
+                  >
+                    Apply
+                  </button>
+                </div>
+                {discountError && <p className="mt-1 text-xs text-red-500">{discountError}</p>}
+                {appliedDiscount > 0 && <p className="mt-1 text-xs text-green-500">Code applied successfully!</p>}
               </div>
 
               <div className="border-t pt-4">
@@ -320,7 +327,7 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                   </div>
                   <h2 className="text-xl font-semibold">Contact Details</h2>
                 </div>
-                
+
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-sm font-medium">Full Name</label>
@@ -385,9 +392,8 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                       {paymentMethods.filter(p => p.type === 'bank').map((method) => (
                         <label
                           key={method.id}
-                          className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${
-                            selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
-                          }`}
+                          className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
+                            }`}
                         >
                           <div className="flex items-center gap-3">
                             <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
@@ -418,9 +424,8 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                       {paymentMethods.filter(p => p.type === 'qris').map((method) => (
                         <label
                           key={method.id}
-                          className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${
-                            selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
-                          }`}
+                          className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
+                            }`}
                         >
                           <div className="flex items-center gap-3">
                             <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
@@ -428,7 +433,7 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                             </div>
                             <span className="font-medium">{method.name}</span>
                           </div>
-                          <Image src="/globe.svg" alt="QRIS" width={24} height={24} className="opacity-50" /> 
+                          <Image src="/globe.svg" alt="QRIS" width={24} height={24} className="opacity-50" />
                           <input
                             type="radio"
                             name="payment"
@@ -452,9 +457,8 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                       {paymentMethods.filter(p => p.type === 'ewallet').map((method) => (
                         <label
                           key={method.id}
-                          className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${
-                            selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
-                          }`}
+                          className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
+                            }`}
                         >
                           <div className="flex items-center gap-3">
                             <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
@@ -482,10 +486,10 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                 disabled={isProcessing}
                 className="w-full rounded-lg bg-primary py-4 text-lg font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:shadow-xl disabled:opacity-50"
               >
-                {isProcessing 
-                  ? "Processing..." 
-                  : finalPrice > 0 
-                    ? `Pay Now • Rp ${finalPrice.toLocaleString('id-ID')}` 
+                {isProcessing
+                  ? "Processing..."
+                  : finalPrice > 0
+                    ? `Pay Now • Rp ${finalPrice.toLocaleString('id-ID')}`
                     : "Register for Free"}
               </button>
             </form>
@@ -498,14 +502,14 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
           <div className="w-full max-w-md rounded-xl bg-background shadow-2xl">
             <div className="flex items-center justify-between border-b p-4">
               <h3 className="text-lg font-semibold">Transaction Recap</h3>
-              <button 
+              <button
                 onClick={() => setShowRecap(false)}
                 className="rounded-full p-1 hover:bg-muted"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="p-6">
               <div className="mb-6 space-y-4">
                 <div className="flex justify-between border-b pb-2">
