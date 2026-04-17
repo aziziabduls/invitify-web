@@ -23,18 +23,8 @@ interface PaymentMethod {
 }
 
 const paymentMethods: PaymentMethod[] = [
-  // Banks
-  { id: "bca", name: "BCA Virtual Account", type: "bank" },
-  { id: "mandiri", name: "Mandiri Virtual Account", type: "bank" },
-  { id: "bni", name: "BNI Virtual Account", type: "bank" },
-  { id: "bri", name: "BRI Virtual Account", type: "bank" },
   // QRIS
   { id: "qris", name: "QRIS", type: "qris" },
-  // E-Wallets
-  { id: "gopay", name: "GoPay", type: "ewallet" },
-  { id: "ovo", name: "OVO", type: "ewallet" },
-  { id: "dana", name: "DANA", type: "ewallet" },
-  { id: "shopeepay", name: "ShopeePay", type: "ewallet" },
 ];
 
 export default function CheckoutView({ event }: CheckoutViewProps) {
@@ -44,7 +34,7 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
     email: "",
     phone: "",
   });
-  const [selectedPayment, setSelectedPayment] = useState<string>("");
+  const [selectedPayment, setSelectedPayment] = useState<string>("qris");
   const [isProcessing, setIsProcessing] = useState(false);
   const [showRecap, setShowRecap] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -131,9 +121,15 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
       // Send data to backend
       const response = await apiClient.post('/client/participants', transactionData);
       const participantId = response.data?.id || response.data?.participant?.id;
+      const paymentUrl = response.data?.payment_url;
 
       setIsProcessing(false);
       setShowRecap(false);
+
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
+        return;
+      }
 
       // Redirect to waiting page with info for QR code
       const params = new URLSearchParams({
@@ -184,24 +180,24 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
         );
       case "qris":
         return (
-          <div className="flex flex-col items-center justify-center rounded-md bg-muted p-4">
-            <p className="mb-4 text-sm font-medium">Scan QR Code to Pay</p>
-            <div className="relative h-48 w-48 bg-white p-2">
-              {/* Placeholder for QR Code */}
-              <div className="h-full w-full bg-black">
-                <div className="h-full w-full border-4 border-white bg-black p-2">
-                  <div className="grid h-full w-full grid-cols-4 grid-rows-4 gap-1">
-                    {[...Array(16)].map((_, i) => (
-                      <div key={i} className={`bg-white ${Math.random() > 0.5 ? 'opacity-100' : 'opacity-0'}`}></div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <p className="mt-4 text-xs text-muted-foreground">
-              Valid for all QRIS supported apps.
-            </p>
-          </div>
+          <div></div>
+          // <div className="flex flex-col items-center justify-center rounded-md bg-muted p-4">
+          //   <p className="mb-4 text-sm font-medium">Scan QR Code to Pay</p>
+          //   <div className="relative h-48 w-48 bg-white p-2">
+          //     <div className="h-full w-full bg-black">
+          //       <div className="h-full w-full border-4 border-white bg-black p-2">
+          //         <div className="grid h-full w-full grid-cols-4 grid-rows-4 gap-1">
+          //           {[...Array(16)].map((_, i) => (
+          //             <div key={i} className={`bg-white ${Math.random() > 0.5 ? 'opacity-100' : 'opacity-0'}`}></div>
+          //           ))}
+          //         </div>
+          //       </div>
+          //     </div>
+          //   </div>
+          //   <p className="mt-4 text-xs text-muted-foreground">
+          //     Valid for all QRIS supported apps.
+          //   </p>
+          // </div >
         );
       case "ewallet":
         return (
@@ -337,6 +333,7 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                       type="text"
                       required
                       placeholder="John Doe"
+                      autoComplete="name"
                       className="w-full rounded-md border bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                       value={formData.name}
                       onChange={handleInputChange}
@@ -350,6 +347,7 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                       type="tel"
                       required
                       placeholder="08123456789"
+                      autoComplete="phone"
                       className="w-full rounded-md border bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                       value={formData.phone}
                       onChange={handleInputChange}
@@ -363,6 +361,7 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                       type="email"
                       required
                       placeholder="john@example.com"
+                      autoComplete="email"
                       className="w-full rounded-md border bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                       value={formData.email}
                       onChange={handleInputChange}
@@ -383,36 +382,38 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
 
                 <div className="space-y-6">
                   {/* Bank Transfer */}
-                  <div>
-                    <h3 className="mb-3 flex items-center font-medium text-muted-foreground">
-                      <Building2 className="mr-2 h-4 w-4" />
-                      Virtual Account (Bank Transfer)
-                    </h3>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {paymentMethods.filter(p => p.type === 'bank').map((method) => (
-                        <label
-                          key={method.id}
-                          className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
-                            }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
-                              {selectedPayment === method.id && <div className="h-2 w-2 rounded-full bg-primary" />}
+                  {paymentMethods.filter(p => p.type === 'bank').length > 0 && (
+                    <div>
+                      <h3 className="mb-3 flex items-center font-medium text-muted-foreground">
+                        <Building2 className="mr-2 h-4 w-4" />
+                        Virtual Account (Bank Transfer)
+                      </h3>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {paymentMethods.filter(p => p.type === 'bank').map((method) => (
+                          <label
+                            key={method.id}
+                            className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
+                              }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
+                                {selectedPayment === method.id && <div className="h-2 w-2 rounded-full bg-primary" />}
+                              </div>
+                              <span className="font-medium">{method.name}</span>
                             </div>
-                            <span className="font-medium">{method.name}</span>
-                          </div>
-                          <input
-                            type="radio"
-                            name="payment"
-                            value={method.id}
-                            checked={selectedPayment === method.id}
-                            onChange={(e) => setSelectedPayment(e.target.value)}
-                            className="hidden"
-                          />
-                        </label>
-                      ))}
+                            <input
+                              type="radio"
+                              name="payment"
+                              value={method.id}
+                              checked={selectedPayment === method.id}
+                              onChange={(e) => setSelectedPayment(e.target.value)}
+                              className="hidden"
+                            />
+                          </label>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* QRIS */}
                   <div>
@@ -448,36 +449,38 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
                   </div>
 
                   {/* E-Wallets */}
-                  <div>
-                    <h3 className="mb-3 flex items-center font-medium text-muted-foreground">
-                      <Wallet className="mr-2 h-4 w-4" />
-                      E-Wallet
-                    </h3>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {paymentMethods.filter(p => p.type === 'ewallet').map((method) => (
-                        <label
-                          key={method.id}
-                          className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
-                            }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
-                              {selectedPayment === method.id && <div className="h-2 w-2 rounded-full bg-primary" />}
+                  {paymentMethods.filter(p => p.type === 'ewallet').length > 0 && (
+                    <div>
+                      <h3 className="mb-3 flex items-center font-medium text-muted-foreground">
+                        <Wallet className="mr-2 h-4 w-4" />
+                        E-Wallet
+                      </h3>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {paymentMethods.filter(p => p.type === 'ewallet').map((method) => (
+                          <label
+                            key={method.id}
+                            className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-all hover:border-primary hover:bg-primary/5 ${selectedPayment === method.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
+                              }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
+                                {selectedPayment === method.id && <div className="h-2 w-2 rounded-full bg-primary" />}
+                              </div>
+                              <span className="font-medium">{method.name}</span>
                             </div>
-                            <span className="font-medium">{method.name}</span>
-                          </div>
-                          <input
-                            type="radio"
-                            name="payment"
-                            value={method.id}
-                            checked={selectedPayment === method.id}
-                            onChange={(e) => setSelectedPayment(e.target.value)}
-                            className="hidden"
-                          />
-                        </label>
-                      ))}
+                            <input
+                              type="radio"
+                              name="payment"
+                              value={method.id}
+                              checked={selectedPayment === method.id}
+                              onChange={(e) => setSelectedPayment(e.target.value)}
+                              className="hidden"
+                            />
+                          </label>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
