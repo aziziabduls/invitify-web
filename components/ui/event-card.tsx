@@ -11,24 +11,25 @@ export interface EventCardProps {
 
 export function EventCard({ image, name, tagline, is_free, href }: EventCardProps) {
   const Card = (
-    <div className="group overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md">
-      <div className="relative aspect-video w-full overflow-hidden">
+    <div className="group overflow-hidden rounded-[16px] bg-background text-foreground shadow-layered transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+      <div className="relative aspect-4/3 w-full overflow-hidden">
         <Image
           src={image}
           alt={name}
           fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
         />
+        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         {is_free && (
-          <span className="absolute top-2 left-2 rounded-full bg-green-500 px-2 py-1 text-xs font-semibold text-white">
-            Free
+          <span className="absolute top-4 left-4 rounded-full bg-white/90 backdrop-blur-md px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-foreground shadow-soft">
+            Free Entry
           </span>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold leading-none tracking-tight">{name}</h3>
-        <p className="mt-2 text-sm text-muted-foreground">{tagline}</p>
+      <div className="p-6">
+        <h3 className="cal-sans text-lg group-hover:text-primary transition-colors line-clamp-1">{name}</h3>
+        <p className="mt-2 text-xs font-medium text-muted-foreground line-clamp-2 leading-relaxed">{tagline}</p>
       </div>
     </div>
   );

@@ -32,21 +32,26 @@ function HeartIcon(props: any) {
 
 export default function TrustedBy() {
     return (
-        <section className="py-12  border-y border-border/50">
+        <section className="py-24 border-t border-border/50">
             <div className="container mx-auto px-4">
-                <p className="text-4xl font-bold leading-tight tracking-tight lg:text-5xl text-black dark:text-white transition-colors line-clamp-3 text-center mb-14">
-                    Trusted by Industry Leaders
-                </p>
+                <div className="animate-fade-in-up stagger-1 flex flex-col items-center gap-4 mb-20">
+                    <span className="text-[16px] font-bold tracking-tighter text-muted-foreground">
+                        Our Network
+                    </span>
+                    <h2 className="cal-sans text-5xl sm:text-7xl tracking-tighter text-foreground">
+                        Trusted by Industry Leaders
+                    </h2>
+                </div>
 
-                <div className="flex flex-wrap justify-center gap-x-8 gap-y-8 sm:gap-x-12 md:gap-x-16 grayscale opacity-70 hover:opacity-100 transition-opacity duration-300">
+                <div className="animate-fade-in-up stagger-2 flex flex-wrap justify-center gap-x-12 gap-y-12 opacity-30 grayscale transition-all duration-700 hover:opacity-100 hover:grayscale-0">
                     {companies.map((company, index) => {
                         const Icon = company.icon;
                         return (
-                            <div key={index} className="flex items-center gap-2 group cursor-pointer">
-                                <div className="bg-background p-2 rounded-lg shadow-sm group-hover:shadow-md transition-shadow">
-                                    <Icon className="h-6 w-6 text-foreground" />
+                            <div key={index} className="flex items-center gap-5 group cursor-pointer transition-transform hover:scale-105">
+                                <div className="bg-background p-4 rounded-2xl shadow-soft border border-border/50 group-hover:shadow-layered transition-all">
+                                    <Icon className="h-7 w-7 text-foreground" />
                                 </div>
-                                <span className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
+                                <span className="cal-sans text-lg tracking-tight text-foreground/80 group-hover:text-foreground">
                                     {company.name}
                                 </span>
                             </div>
