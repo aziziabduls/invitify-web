@@ -3,6 +3,8 @@ import EventDetailView from "@/components/event-detail-view";
 import { notFound } from "next/navigation";
 import { eventService } from "@/services/event-service";
 
+import { Event } from "@/lib/data";
+
 export const dynamic = 'force-dynamic';
 
 // Since we are using an API service, we might not want to use generateStaticParams 
@@ -15,15 +17,21 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
   console.log("events/[id] params:", { id });
   
   let event = null;
+  let allEvents: Event[] = [];
   try {
-    event = await eventService.getById(id);
+    const [eventData, allEventsData] = await Promise.all([
+      eventService.getById(id),
+      eventService.getAll()
+    ]);
+    event = eventData;
+    allEvents = allEventsData;
   } catch (error) {
-    console.error(`Failed to fetch event ${id}`, error);
+    console.error(`Failed to fetch event data for ${id}`, error);
   }
 
   if (!event) {
     notFound();
   }
 
-  return <EventDetailView event={event} />;
+  return <EventDetailView event={event} allEvents={allEvents} />;
 }

@@ -9,13 +9,18 @@ import { Navbar } from "@/components/ui/navbar";
 import TrustedBy from "@/components/ui/trustedby";
 import toast from "react-hot-toast";
 import { Countdown } from "@/components/ui/countdown";
+import { EventCatalogue } from "./ui/event-catalogue";
+
 
 interface EventDetailViewProps {
   event: Event;
+  allEvents: Event[];
 }
 
-export default function EventDetailView({ event }: EventDetailViewProps) {
+export default function EventDetailView({ event, allEvents }: EventDetailViewProps) {
   const [activeTab, setActiveTab] = useState("tickets");
+
+  const events = allEvents;
 
   const tabs = [
     { id: "tickets", label: "Tickets", icon: Ticket },
@@ -31,6 +36,8 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
       toast.error("Event is not active");
     }
   };
+
+
 
   return (
     <div className="min-h-screen bg-background font-sans">
@@ -106,11 +113,10 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 whitespace-nowrap text-sm font-medium transition-colors ${
-                      activeTab === tab.id
-                        ? "text-primary border-b-2 border-primary pb-1 -mb-4.25"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`flex items-center gap-2 whitespace-nowrap text-sm font-medium transition-colors ${activeTab === tab.id
+                      ? "text-primary border-b-2 border-primary pb-1 -mb-4.25"
+                      : "text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     <Icon className="h-4 w-4" />
                     {tab.label}
@@ -120,7 +126,7 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
             </div>
           </div>
 
-          <div className="mt-8 min-h-75">
+          <div className="mt-8 min-h-auto">
             {activeTab === "tickets" && (
               <div className="space-y-4">
                 <h3 className="text-2xl font-bold">Get your tickets</h3>
@@ -132,14 +138,13 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
                       <h4 className="font-semibold">General Admission</h4>
                       <p className="text-sm text-muted-foreground">Access to all areas</p>
                     </div>
-                    <Link 
+                    <Link
                       href={event.status === "active" ? `/events/${event.id}/payment` : "#"}
                       onClick={handleTicketClick}
-                      className={`rounded-md px-4 py-2 text-primary-foreground ${
-                        event.status === "active" 
-                          ? "bg-primary hover:bg-primary/90" 
-                          : "bg-muted text-muted-foreground cursor-not-allowed"
-                      }`}
+                      className={`rounded-md px-4 py-2 text-primary-foreground ${event.status === "active"
+                        ? "bg-primary hover:bg-primary/90"
+                        : "bg-muted text-muted-foreground cursor-not-allowed"
+                        }`}
                     >
                       {event.status === "active" ? event.is_free ? "Get Ticket For Free" : "Get Ticket Now" : "Unavailable"}
                     </Link>
@@ -154,21 +159,21 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                     {event.brands.map((brand) => (
                       <div key={brand.id} className="flex flex-col items-center justify-center rounded-lg border p-4 hover:shadow-sm">
-                         {/* Placeholder for brand logo if null */}
-                         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                            {brand.icon_url ? (
-                              <Image 
-                                src={brand.icon_url} 
-                                alt={brand.name} 
-                                width={64} 
-                                height={64} 
-                                className="rounded-full object-cover" 
-                              />
-                            ) : (
-                              <Users className="h-8 w-8" />
-                            )}
-                         </div>
-                         <p className="mt-2 text-center text-sm font-medium">{brand.name}</p>
+                        {/* Placeholder for brand logo if null */}
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                          {brand.icon_url ? (
+                            <Image
+                              src={brand.icon_url}
+                              alt={brand.name}
+                              width={64}
+                              height={64}
+                              className="rounded-full object-cover"
+                            />
+                          ) : (
+                            <Users className="h-8 w-8" />
+                          )}
+                        </div>
+                        <p className="mt-2 text-center text-sm font-medium">{brand.name}</p>
                       </div>
                     ))}
                   </div>
@@ -185,20 +190,20 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
                     {event.rundowns
                       .sort((a, b) => new Date(a.rundown_date + 'T' + a.rundown_time).getTime() - new Date(b.rundown_date + 'T' + b.rundown_time).getTime())
                       .map((rundown) => (
-                      <div key={rundown.id} className="flex gap-4 rounded-lg border p-4">
-                        <div className="flex flex-col items-center justify-center rounded-md bg-primary/10 px-4 py-2 text-primary">
-                          <Clock className="mb-1 h-5 w-5" />
-                          <span className="text-sm font-bold">{rundown.rundown_time.slice(0, 5)}</span>
-                        </div>
-                        <div>
-                          <h4 className="font-semibold">{rundown.title}</h4>
-                          <p className="text-sm text-muted-foreground">{rundown.description}</p>
-                          <div className="mt-1 text-xs text-muted-foreground">
-                            {new Date(rundown.rundown_date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                        <div key={rundown.id} className="flex gap-4 rounded-lg border p-4">
+                          <div className="flex flex-col items-center justify-center rounded-md bg-primary/10 px-4 py-2 text-primary">
+                            <Clock className="mb-1 h-5 w-5" />
+                            <span className="text-sm font-bold">{rundown.rundown_time.slice(0, 5)}</span>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold">{rundown.title}</h4>
+                            <p className="text-sm text-muted-foreground">{rundown.description}</p>
+                            <div className="mt-1 text-xs text-muted-foreground">
+                              {new Date(rundown.rundown_date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 ) : (
                   <p className="text-muted-foreground">Schedule will be announced shortly.</p>
@@ -219,7 +224,7 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                   {[1, 2, 3].map((i) => (
                     <div key={i} className="relative aspect-video overflow-hidden rounded-lg bg-muted">
-                       {/* Placeholder for gallery */}
+                      {/* Placeholder for gallery */}
                     </div>
                   ))}
                 </div>
@@ -227,7 +232,9 @@ export default function EventDetailView({ event }: EventDetailViewProps) {
             )}
           </div>
         </div>
-        
+
+        <EventCatalogue initialEvents={events} />
+
         <TrustedBy />
       </main>
     </div>

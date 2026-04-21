@@ -22,7 +22,7 @@ export function EventCard({ image, name, tagline, is_free, href }: EventCardProp
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         {is_free && (
-          <span className="absolute top-4 left-4 rounded-full bg-white/90 backdrop-blur-md px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-foreground shadow-soft">
+          <span className="absolute top-4 left-4 rounded-full bg-background backdrop-blur-md px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-foreground shadow-soft">
             Free Entry
           </span>
         )}
