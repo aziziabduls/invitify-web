@@ -34,7 +34,17 @@ export default function TrustedBy() {
     return (
         <section className="py-24 border-t border-border/50">
             <div className="container mx-auto px-4">
-                <div className="animate-fade-in-up stagger-1 flex flex-col items-center gap-4 mb-20">
+                {/* <div className="animate-fade-in-up stagger-1 flex flex-col items-start gap-4 mb-2">
+                    <span className="cal-sans text-[16px] font-bold mb-0 tracking-tighter text-muted-foreground">
+                        Our Network
+                    </span>
+                    <h2 className="cal-sans text-5xl sm:text-7xl tracking-tighter text-foreground">
+                        Trusted by Industry Leaders
+                    </h2>
+                </div>
+                 */}
+
+                <div className="animate-fade-in-up stagger-1 mb-16 space-y-4 text-left">
                     <span className="text-[16px] font-bold tracking-tighter text-muted-foreground">
                         Our Network
                     </span>
@@ -43,7 +53,7 @@ export default function TrustedBy() {
                     </h2>
                 </div>
 
-                <div className="animate-fade-in-up stagger-2 flex flex-wrap justify-center gap-x-12 gap-y-12 opacity-30 grayscale transition-all duration-700 hover:opacity-100 hover:grayscale-0">
+                <div className="animate-fade-in-up stagger-2 flex flex-wrap justify-items-stretch gap-x-12 gap-y-12 opacity-30 grayscale transition-all duration-700 hover:opacity-100 hover:grayscale-0">
                     {companies.map((company, index) => {
                         const Icon = company.icon;
                         return (

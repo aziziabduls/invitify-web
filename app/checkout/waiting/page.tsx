@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { Clock, QrCode } from "lucide-react";
-import { Navbar } from "@/components/ui/navbar";
+import { MilanoNavbar } from "@/components/milano/navbar";
 import { useSearchParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { Suspense, useEffect, useState } from "react";
@@ -130,7 +130,7 @@ function WaitingContent() {
 export default function WaitingPage() {
   return (
     <div className="min-h-screen bg-background font-sans">
-      <Navbar />
+      <MilanoNavbar isCheckout={true} transparentTop={false} />
       <Suspense fallback={
         <main className="container mx-auto flex flex-col items-center justify-center px-4 py-24 text-center">
           <div className="animate-pulse">Loading...</div>

@@ -47,6 +47,12 @@
   --radius-4xl: calc(var(--radius) + 16px);
   
   --animate-fade-in-up: fadeInUp 0.8s ease-out forwards;
+  --animate-marquee: marquee 30s linear infinite;
+  
+  --color-milano-deep: var(--milano-deep);
+  --color-milano-cyan: var(--milano-cyan);
+  --color-milano-purple: var(--milano-purple);
+  --color-milano-card: var(--milano-card);
   
   @keyframes fadeInUp {
     from {
@@ -57,6 +63,11 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
 }
 
@@ -93,6 +104,11 @@
   --sidebar-ring: oklch(0.708 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
+
+  --milano-deep: #0E0E1E;
+  --milano-cyan: #00F5FF;
+  --milano-purple: #BC13FE;
+  --milano-card: #F8F9FA;
 }
 
 .dark {

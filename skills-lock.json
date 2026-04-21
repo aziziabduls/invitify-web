@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "clone-website": {
+      "source": "julianromli/ai-skills",
+      "sourceType": "github",
+      "computedHash": "899d17e0db8f0d997dd76867c4a46f0c4211d982263e648d6c78da2614532d8c"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",

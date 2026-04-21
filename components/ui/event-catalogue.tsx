@@ -23,7 +23,7 @@ export function EventCatalogue({ initialEvents }: EventCatalogueProps) {
 
   return (
     <div className="container mx-auto px-4 mt-28 mb-0">
-      <div className="animate-fade-in-up stagger-1 mb-16 space-y-4 text-center">
+      <div className="animate-fade-in-up stagger-1 mb-16 space-y-4 text-left">
         <span className="text-[16px] font-bold tracking-tighter text-muted-foreground">
           The Catalog
         </span>
@@ -33,7 +33,7 @@ export function EventCatalogue({ initialEvents }: EventCatalogueProps) {
       </div>
 
       {/* Filter Pills */}
-      <div className="animate-fade-in-up stagger-2 flex justify-center gap-3 mb-16">
+      <div className="animate-fade-in-up stagger-2 flex justify-start gap-3 mb-16">
         <button
           onClick={() => setFilter("all")}
           className={`rounded-full px-8 py-3 text-[15px] font-bold tracking-tighter transition-all active:scale-95 ${filter === "all"

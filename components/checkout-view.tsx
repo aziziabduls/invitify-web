@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Navbar } from "@/components/ui/navbar";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/api-client";
+import { MilanoNavbar } from "./milano/navbar";
 
 interface CheckoutViewProps {
   event: Event;
@@ -220,11 +221,12 @@ export default function CheckoutView({ event }: CheckoutViewProps) {
 
   return (
     <div className="min-h-screen bg-background font-sans">
-      <Navbar />
+      {/* <Navbar /> */}
+      <MilanoNavbar event={event} isCheckout={true} transparentTop={false} />
       <main className="container mx-auto px-4 py-18">
         <Link
           href={`/events/${event.id}`}
-          className="mb-6 inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
+          className="mb-6 inline-flex items-center text-sm mt-6 font-medium text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Event
